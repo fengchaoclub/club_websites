@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <meta charset="utf-8">
+        <meta http-equiv="pragma" content="no-cache" />
+        <meta http-equiv="content-type" content="no-cache, must-revalidate" />
+        <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <!-- 引入组件库 -->
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <!-- <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script> -->
+        <script src="https://upcdn.b0.upaiyun.com/libs/jquery/jquery-2.0.2.min.js"></script>
+        <script src="https://res2.wx.qq.com/open/js/jweixin-1.4.0.js "></script>        
+        <script src="../js/request.js"></script>
+        <link rel="stylesheet" href="../css/joinus_vue.css">
+        <script>
+            $.ajax({
+                url: "http://pa.api.sufeng.online/WechatOa/JsSdkConfig?url=" + window.location.href.split("#")[0],
+                type: "GET",
+                dataType: "jsonp", //指定服务器返回的数据类型
+                jsonp: "callback",
+                success: function (res) {
+                    console.info("Get Into success");
+                    inintWXApi(res)
+                    console.log(res)
+                    // $("#text").val(result);
+                }
+                });
+                var attachData = {
+                title:'蜂巢工作室',
+                desc:'2020招新报名表',
+                imgUrl:"http://code.sufeng.online/images/logo-small.png"
+                }
+                function inintWXApi(data){
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: data.AppId, // 必填，公众号的唯一标识
+                    timestamp:data.TimeStamp , // 必填，生成签名的时间戳
+                    nonceStr: data.NonceStr, // 必填，生成签名的随机串
+                    signature: data.Signature,// 必填，签名，见附录1
+                    jsApiList: [
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ'                        
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                })
+                wx.ready(function(){
+                    //分享朋友圈
+                    wx.onMenuShareTimeline({
+                        title: attachData.title, // 分享标题
+                        link: window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: attachData.imgUrl, // 分享图标
+                        success: function () {
+                            // alert("成功")
+                        
+                        }
+                    });
+                //分享好友
+                    wx.onMenuShareAppMessage({
+                        title: attachData.title, // 分享标题
+                        desc: attachData.desc, // 分享描述
+                        link: window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: attachData.imgUrl, // 分享图标
+                        type: '', // 分享类型,music、video或link，不填默认为link
+                        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                        success: function () {
+                            // alert("成功")
+                        
+                        }
+                    }); 
+                //QQ
+                    wx.onMenuShareQQ({
+                    title: attachData.title, // 分享标题
+                    desc: attachData.desc, // 分享描述
+                    link: window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: attachData.imgUrl, // 分享图标
+                    success: function () {
+                        // 用户确认分享后执行的回调函数
+                    },
+                    cancel: function () {
+                        // 用户取消分享后执行的回调函数
+                    }
+                    });
+                });
+                }
+        </script>
+    </head>
+    <body>
+        <div id="app" :class="{'add-padding':isMObile}">
+            <div :class="{'container':!isMObile}" v-if="!showSuccess">
+                <div :class="{'from-border':!isMObile}">
+                    <el-form ref="form" :model="form" label-width="80px" :label-position="position" >
+                        <el-form-item label="姓名"  size="medium">
+                        <el-input  size="medium" v-model="form.name" placeholder="请输入你的姓名"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学院"  size="medium">
+                            <el-input  size="medium" v-model="form.collage" placeholder="请输入你所在的学院"></el-input>
+                        </el-form-item>
+                        <el-form-item label="专业"  size="medium">
+                            <el-input  size="medium" v-model="form.subject" placeholder="请输入你的专业"></el-input>
+                        </el-form-item>
+                        <el-form-item label="联系方式" size="medium">
+                            <el-input  size="medium" v-model="form.tel" placeholder="请输入你的联系方式"></el-input>
+                        </el-form-item>
+                        <el-form-item label="兴趣" size="medium">
+                            <el-input  size="medium" v-model="form.interest" placeholder="你的兴趣如数码，足球"></el-input>
+                        </el-form-item>
+                        <el-form-item label="年级">
+                            <el-select v-model="form.grate" placeholder="请选择你的年级">
+                            <el-option label="20级" value="20"></el-option>
+                            <el-option label="19级" value="19"></el-option>
+                            <el-option label="18级" value="18"></el-option>
+                            <el-option label="17级" value="17"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-radio-group v-model="form.sex">
+                            <el-radio label="男"></el-radio>
+                            <el-radio label="女"></el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="自我介绍">
+                        <el-input type="textarea" v-model="form.introduce" placeholder="简短的介绍一下自己"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                        <el-button type="primary" @click="onSubmit">立即提交</el-button>
+                        <el-button @click="onClear">重新输入</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <div class="contact-us">报名过程中有任何问题或疑问可以添加QQ群：730330701</div>
+                </div>
+            </div>
+            <div class="container"  v-if="showSuccess">
+                <div id="success" class="child-center">
+                    <div class="success-img"></div>
+                    <p>感谢支持！我们稍后将会联系您。</p>
+                </div>
+            </div>
+        </div>
+        <script src="../js/joinus_vue.js"></script>
+    </body>
+</html>
